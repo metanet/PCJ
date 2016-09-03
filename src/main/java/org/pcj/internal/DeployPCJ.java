@@ -91,9 +91,16 @@ final public class DeployPCJ {
 
     private List<String> makeJvmParams(NodeInfo node) {
         String separator = System.getProperty("file.separator");
-        String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
+//        String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
+        String path = "java";
 
         String classpath = System.getProperty("java.class.path");
+
+        String classpathOverride = System.getProperty("overrideClasspath");
+        if (classpathOverride != null && !classpathOverride.trim().isEmpty()){
+            LOGGER.fine("Overriding classpath with: " + classpathOverride.trim());
+            classpath = classpathOverride.trim();
+        }
 
         List<String> params = new ArrayList<>(Arrays.asList(
                 path, "-cp", classpath));
@@ -155,6 +162,12 @@ final public class DeployPCJ {
                 node.getHostname(), // ssh host
                 sb.toString().trim() // command
         ));
+
+        String sshUser = System.getProperty("sshUser");
+        if (sshUser != null && !sshUser.trim().isEmpty()) {
+            LOGGER.fine("SSH USER: " + sshUser.trim());
+            sshExec.set(1, sshUser + "@" + sshExec.get(1));
+        }
 
         exec(sshExec);
     }
