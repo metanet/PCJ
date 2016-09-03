@@ -3,6 +3,9 @@
  */
 package org.pcj.internal;
 
+import org.pcj.internal.storage.InternalStorage;
+import org.pcj.internal.utils.NodeInfo;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,8 +14,6 @@ import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.pcj.internal.storage.InternalStorage;
-import org.pcj.internal.utils.NodeInfo;
 
 /**
  * Class used for deploying PCJ when using one of deploy methods.
@@ -109,6 +110,11 @@ final public class DeployPCJ {
 
         String classpath = System.getProperty("java.class.path");
 
+        String classpathOverride = System.getProperty("overrideClasspath");
+        if (classpathOverride != null && !classpathOverride.trim().isEmpty()){
+            classpath = classpathOverride.trim();
+        }
+
         List<String> params = new ArrayList<>(Arrays.asList(
                 path, "-cp", classpath));
 
@@ -169,6 +175,12 @@ final public class DeployPCJ {
                 node.getHostname(), // ssh host
                 sb.toString().trim() // command
         ));
+
+        String sshUser = System.getProperty("sshUser");
+        if (sshUser != null && !sshUser.trim().isEmpty()) {
+            sshExec.set(1, sshUser + "@" + sshExec.get(1));
+        }
+
 
         exec(sshExec);
 
