@@ -12,6 +12,9 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+group = 'com.github.metanet'
 
 ext.versionNumber = "4.1.0"
 ext.buildNumber = "SNAPSHOT"
